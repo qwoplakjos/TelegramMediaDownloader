@@ -29,19 +29,23 @@ Before running this application, you need the following:
     cd TelegramMediaDownloader
     ```
 
-2. **Set up API Credentials**:
+    or download the exe:
+
+     - [TelegramBulkDownloader.exe](https://github.com/qwoplakjos/TelegramMediaDownloader/releases/download/1.0.0/TelegramBulkDownloader.exe)
+
+3. **Set up API Credentials**:
    - Obtain your `api_id` and `api_hash` from [my.telegram.org](https://my.telegram.org/auth).
    - Launch the application and input your credentials (`api_id`, `api_hash`, `phone_number`).
    - Save your credentials for future sessions.
 
-3. **Login**:
+4. **Login**:
    - Click the "Request Code" button to receive a verification code via Telegram. Enter the verification code when prompted.
 
-4. **Select Chat or Channel**:
+5. **Select Chat or Channel**:
    - After successful authentication, a list of chats and channels you're a part of will be displayed in the UI.
    - Select a chat or channel to download media from.
 
-5. **Download Media**:
+6. **Download Media**:
    - Click the "Download" button to start downloading media files (documents and photos). Files will be saved in the `downloads` folder.
 
 ## App UI:
