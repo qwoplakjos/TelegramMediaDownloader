@@ -25,8 +25,8 @@ Before running this application, you need the following:
 1. **Clone the repository**:
 
     ```bash
-    git clone https://github.com/yourusername/TelegramBulkDownloader.git
-    cd TelegramBulkDownloader
+    git clone https://github.com/qwoplakjos/TelegramMediaDownloader.git
+    cd TelegramMediaDownloade
     ```
 
 2. **Set up API Credentials**:
