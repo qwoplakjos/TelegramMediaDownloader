@@ -42,6 +42,7 @@ namespace TelegramBulkDownloader
                 case "api_hash": return apiHashTextBox.Text; // Replace with your API Hash
                 case "phone_number": return phoneNumberTextBox.Text; // Replace with your phone number
                 case "verification_code": return Prompt.ShowDialog("Verification code:", "Code");
+                case "session_pathname": return "TelegramSession.ss";
 
                 default: return null; // Default behavior for unhandled cases
             }
