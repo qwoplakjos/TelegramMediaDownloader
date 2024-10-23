@@ -38,13 +38,13 @@ namespace TelegramBulkDownloader
         {
             switch (what)
             {
-                case "api_id": return apiIdTextBox.Text; // Replace with your API ID
-                case "api_hash": return apiHashTextBox.Text; // Replace with your API Hash
-                case "phone_number": return phoneNumberTextBox.Text; // Replace with your phone number
+                case "api_id": return apiIdTextBox.Text;
+                case "api_hash": return apiHashTextBox.Text; 
+                case "phone_number": return phoneNumberTextBox.Text; 
                 case "verification_code": return Prompt.ShowDialog("Verification code:", "Code");
                 case "session_pathname": return "TelegramSession.ss";
 
-                default: return null; // Default behavior for unhandled cases
+                default: return null;
             }
         }
 
@@ -234,27 +234,6 @@ namespace TelegramBulkDownloader
             }
         }
 
-        //private async Task DownloadMedia(FileLocation fileLocation)
-        //{
-        //    if (fileLocation == null) return;
-
-        //    // Get the file path and URL for download
-        //    var file = await client.DownloadFileAsync(fileLocation, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "TelegramDownloads", ""));
-
-        //    // Ensure the directory exists
-        //    Directory.CreateDirectory(Path.GetDirectoryName(file));
-
-        //    using (var client = new WebClient())
-        //    {
-        //        client.DownloadFileCompleted += (s, e) =>
-        //        {
-        //            Console.WriteLine($"Downloaded: {fileLocation.FileName}");
-        //        };
-
-        //        // Start the download
-        //        await client.DownloadFileTaskAsync(new Uri(fileLocation.url), Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "TelegramDownloads", fileLocation.FileName));
-        //    }
-        //}
     }
     public class ListItem
     {
