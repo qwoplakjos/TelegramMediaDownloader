@@ -7,3 +7,6 @@ After making an app you should see ID and hash here:
 
 ![image](https://github.com/user-attachments/assets/dc818447-639e-4f78-a16c-5fb595f109bf)
 
+App UI:
+
+![image](https://github.com/user-attachments/assets/2592e893-64f4-4ff6-9fe4-0784992e2aa0)
