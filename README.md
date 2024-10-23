@@ -26,7 +26,7 @@ Before running this application, you need the following:
 
     ```bash
     git clone https://github.com/qwoplakjos/TelegramMediaDownloader.git
-    cd TelegramMediaDownloade
+    cd TelegramMediaDownloader
     ```
 
 2. **Set up API Credentials**:
