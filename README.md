@@ -13,7 +13,7 @@ A Windows Forms application that allows you to authenticate with your Telegram a
 
 Before running this application, you need the following:
 
-- **Telegram API Credentials**: You must have a Telegram app registered to obtain the `api_id` and `api_hash`. You can register a new Telegram application [here](https://my.telegram.org/auth).
+- **Telegram API Credentials**: You must have a Telegram app registered to obtain the `api_id` and `api_hash`. You can register a new Telegram application [here](https://my.telegram.org/apps).
   
 - **.NET Framework**: This project uses **.NET Framework**. Ensure you have it installed.
 
@@ -34,7 +34,7 @@ Before running this application, you need the following:
      - [TelegramBulkDownloader.exe](https://github.com/qwoplakjos/TelegramMediaDownloader/releases/download/1.0.0/TelegramBulkDownloader.exe)
 
 3. **Set up API Credentials**:
-   - Obtain your `api_id` and `api_hash` from [my.telegram.org](https://my.telegram.org/auth).
+   - Obtain your `api_id` and `api_hash` from [my.telegram.org/apps](https://my.telegram.org/apps ).
    - Launch the application and input your credentials (`api_id`, `api_hash`, `phone_number`).
    - Save your credentials for future sessions.
 
