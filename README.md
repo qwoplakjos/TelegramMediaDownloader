@@ -31,7 +31,7 @@ Before running this application, you need the following:
 
     or download the exe:
 
-     - [TelegramBulkDownloader.exe](https://github.com/qwoplakjos/TelegramMediaDownloader/releases/download/1.0.0/TelegramBulkDownloader.exe)
+     - [TelegramBulkDownloader.exe](https://github.com/qwoplakjos/TelegramMediaDownloader/releases/download/1.0.1/TelegramBulkDownloader.exe)
 
 3. **Set up API Credentials**:
    - Obtain your `api_id` and `api_hash` from [my.telegram.org/apps](https://my.telegram.org/apps ).
