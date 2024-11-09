@@ -39,6 +39,9 @@
             this.label3 = new System.Windows.Forms.Label();
             this.labelStatus = new System.Windows.Forms.Label();
             this.listBoxChannels = new System.Windows.Forms.ListBox();
+            this.skipCheckbox = new System.Windows.Forms.CheckBox();
+            this.searchTextbox = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // apiIdTextBox
@@ -109,7 +112,7 @@
             // 
             // labelStatus
             // 
-            this.labelStatus.Location = new System.Drawing.Point(12, 151);
+            this.labelStatus.Location = new System.Drawing.Point(12, 171);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(244, 13);
             this.labelStatus.TabIndex = 9;
@@ -121,14 +124,46 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listBoxChannels.FormattingEnabled = true;
-            this.listBoxChannels.Location = new System.Drawing.Point(261, 9);
+            this.listBoxChannels.IntegralHeight = false;
+            this.listBoxChannels.Location = new System.Drawing.Point(261, 32);
             this.listBoxChannels.Name = "listBoxChannels";
-            this.listBoxChannels.Size = new System.Drawing.Size(288, 160);
+            this.listBoxChannels.Size = new System.Drawing.Size(288, 152);
             this.listBoxChannels.TabIndex = 10;
+            // 
+            // skipCheckbox
+            // 
+            this.skipCheckbox.AutoSize = true;
+            this.skipCheckbox.Location = new System.Drawing.Point(15, 147);
+            this.skipCheckbox.Name = "skipCheckbox";
+            this.skipCheckbox.Size = new System.Drawing.Size(166, 17);
+            this.skipCheckbox.TabIndex = 11;
+            this.skipCheckbox.Text = "Skip already downloaded files";
+            this.skipCheckbox.UseVisualStyleBackColor = true;
+            // 
+            // searchTextbox
+            // 
+            this.searchTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.searchTextbox.Location = new System.Drawing.Point(309, 6);
+            this.searchTextbox.Name = "searchTextbox";
+            this.searchTextbox.Size = new System.Drawing.Size(240, 20);
+            this.searchTextbox.TabIndex = 12;
+            this.searchTextbox.TextChanged += new System.EventHandler(this.searchTextbox_TextChanged);
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(262, 9);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(45, 16);
+            this.label4.TabIndex = 13;
+            this.label4.Text = "Search:";
             // 
             // Form1
             // 
-            this.ClientSize = new System.Drawing.Size(555, 177);
+            this.ClientSize = new System.Drawing.Size(555, 189);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.searchTextbox);
+            this.Controls.Add(this.skipCheckbox);
             this.Controls.Add(this.listBoxChannels);
             this.Controls.Add(this.labelStatus);
             this.Controls.Add(this.label3);
@@ -161,6 +196,9 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label labelStatus;
         private System.Windows.Forms.ListBox listBoxChannels;
+        private System.Windows.Forms.CheckBox skipCheckbox;
+        private System.Windows.Forms.TextBox searchTextbox;
+        private System.Windows.Forms.Label label4;
     }
 }
 

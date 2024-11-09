@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using TL;
-using TL.Layer23;
 using WTelegram;
 
 
@@ -22,6 +17,8 @@ namespace TelegramBulkDownloader
         string credsFile = "credentials.txt";
         string downloadFolder = "downloads";
         static Client client;
+        List<ListItem> chats;
+
 
         public Form1()
         {
@@ -39,8 +36,8 @@ namespace TelegramBulkDownloader
             switch (what)
             {
                 case "api_id": return apiIdTextBox.Text;
-                case "api_hash": return apiHashTextBox.Text; 
-                case "phone_number": return phoneNumberTextBox.Text; 
+                case "api_hash": return apiHashTextBox.Text;
+                case "phone_number": return phoneNumberTextBox.Text;
                 case "verification_code": return Prompt.ShowDialog("Verification code:", "Code");
                 case "session_pathname": return "TelegramSession.ss";
 
@@ -79,6 +76,8 @@ namespace TelegramBulkDownloader
         {
             try
             {
+                if (listBoxChannels.Items.Count > 0) return;
+
                 labelStatus.Text = "Requesting auth code...";
 
                 client = new WTelegram.Client(Config);
@@ -89,10 +88,8 @@ namespace TelegramBulkDownloader
 
                 SaveCredentials();
 
-                Console.WriteLine($"We are logged in as {myself} (id {myself.id})");
 
                 var chats = await client.Messages_GetAllChats();
-                Console.WriteLine("This user has joined the following active chats:");
 
                 foreach (var chat in chats.chats)
                 {
@@ -109,117 +106,115 @@ namespace TelegramBulkDownloader
         {
             try
             {
-
                 if (listBoxChannels.SelectedItem is ListItem selectedChat)
                 {
-                    InputPeer chat = null; // Initialize a variable to hold the InputPeer
+                    InputPeer chat = null;
 
-                    // Determine the type of selectedChat.Value and create the corresponding InputPeer
-                    switch (selectedChat.Value)
+                    if (selectedChat.Value is Chat chatt)
+                        chat = chatt;
+                    else if (selectedChat.Value is Channel channel)
+                        chat = channel;
+                    else
                     {
-                        case Chat chatt:
-                            chat = selectedChat.Value as Chat;
-                            break;
-                        case Channel channel:
-                            chat = selectedChat.Value as Channel;
-                            break;
-                        default:
-                            MessageBox.Show("Selected item is not a valid chat or channel.");
-                            return; // Exit the method if the selected item is neither
+                        MessageBox.Show("Selected item is not a valid chat or channel.");
+                        return;
                     }
-
-
 
                     for (int offset_id = 0; ;)
                     {
                         var messages = await client.Messages_GetHistory(chat, offset_id);
                         if (messages.Messages.Length == 0) break;
+
                         foreach (var msgBase in messages.Messages)
                         {
-                            var from = messages.UserOrChat(msgBase.From ?? msgBase.Peer); // from can be User/Chat/Channel
-
                             if (msgBase is TL.Message msg)
                             {
-
+                                string filename = null;
+                                string filePath = null;
 
                                 if (msg.media is MessageMediaDocument)
                                 {
-                                    var document = (msg.media as MessageMediaDocument).document as Document; // Cast to MessageMediaDocument
+                                    var document = (msg.media as MessageMediaDocument).document as Document;
                                     if (document != null)
                                     {
-                                        var filename = document.Filename; // Use document's original filename, or build a name from document ID & MIME type:
+                                        filename = string.IsNullOrEmpty(document.Filename)
+                                            ? $"{document.id}.{document.mime_type.Split('/')[1]}"
+                                            : document.Filename;
+                                        filePath = Path.Combine(downloadFolder, filename);
 
-
-                                        if (string.IsNullOrEmpty(filename))
+                                        if (skipCheckbox.Checked && File.Exists(filePath))
                                         {
-                                            var mimeTypeParts = document.mime_type.Split('/');
-                                            filename = $"{document.id}.{mimeTypeParts[1]}"; // Build filename using ID and MIME type
+                                            labelStatus.Text = "Skipping " + filename;
+                                            continue;
                                         }
 
+                                        filePath = GetUniqueFilePath(filePath);
                                         labelStatus.Text = "Downloading " + filename;
 
-
-
-                                        while (File.Exists(downloadFolder + "/" + filename))
-                                        {
-                                            filename = "Copy_" + filename;
-                                        }
-
-
-                                        using (var fileStream = File.Create(downloadFolder + "/" + filename))
+                                        using (var fileStream = File.Create(filePath))
                                         {
                                             await client.DownloadFileAsync(document, fileStream);
                                         }
-                                        Console.WriteLine("Download finished");
+                                        labelStatus.Text = "Download finished for " + filename;
                                     }
                                 }
-
-                                else
-                                if (msg.media is MessageMediaPhoto)
+                                else if (msg.media is MessageMediaPhoto)
                                 {
-                                    var photo = ((MessageMediaPhoto)msg.media).photo as Photo;
+                                    var photo = (msg.media as MessageMediaPhoto).photo as Photo;
+                                    filename = $"{photo.id}";
+
+                                    string tempFilePath = Path.Combine(downloadFolder, filename);
 
 
-                                    var filename = $"{photo.id}TEMP.jpg";
-                                    labelStatus.Text = "Downloading " + filename;
-
-
-
-                                    var finalPath = downloadFolder + "/" + filename;
-
-
-
-                                    using (var fileStream = File.Create(finalPath))
+                                    if (skipCheckbox.Checked)
                                     {
-                                        var type = await client.DownloadFileAsync(photo, fileStream);
 
-                                        fileStream.Close(); // necessary for the renaming
-                                        Console.WriteLine("Download finished");
-                                        if (!(type is Storage_FileType.unknown) && !(type is Storage_FileType.partial))
+                                        var types = new string[] { ".jpeg", ".jpg", ".gif", ".pdf", ".png", ".mp4" };
+
+                                        bool exists = false;
+
+                                        foreach (var t in types)
                                         {
-                                            var newFilename = $"{photo.id}.{type}";
-
-                                            while (File.Exists(downloadFolder + "/" + newFilename))
+                                            if (File.Exists(tempFilePath + t))
                                             {
-                                                newFilename = "Copy_" + newFilename;
+                                                exists = true;
+                                                break;
                                             }
-
-                                            newFilename = downloadFolder + "/" + newFilename;
-
-
-                                            File.Move(finalPath, newFilename); // rename extension
                                         }
+
+                                        if (exists)
+                                        {
+                                            labelStatus.Text = "Skipping " + filename;
+                                            continue;
+                                        }
+                                    }
+
+                                    using (var fileStream = File.Create(tempFilePath))
+                                    {
+                                        var photoType = await client.DownloadFileAsync(photo, fileStream);
+                                        fileStream.Close(); 
+
+                                        string extension = photoType.ToString().ToLower();
+                                        filename = $"{photo.id}.{extension}";
+                                        filePath = Path.Combine(downloadFolder, filename);
+
+                                        if (skipCheckbox.Checked && File.Exists(filePath))
+                                        {
+                                            labelStatus.Text = "Skipping " + filename;
+                                            File.Delete(tempFilePath); 
+                                            continue;
+                                        }
+
+                                        filePath = GetUniqueFilePath(filePath);
+                                        File.Move(tempFilePath, filePath);
+                                        labelStatus.Text = "Download finished for " + filename;
                                     }
                                 }
                             }
-
-
                         }
-                        offset_id = messages.Messages[messages.Messages.Count() - 1].ID;
 
+                        offset_id = messages.Messages.Last().ID;
                     }
-
-
 
                     MessageBox.Show("Download completed!");
                 }
@@ -234,6 +229,36 @@ namespace TelegramBulkDownloader
             }
         }
 
+        // Helper method to generate unique file path if file already exists
+        private string GetUniqueFilePath(string filePath)
+        {
+            string uniqueFilePath = filePath;
+            int copyIndex = 1;
+            while (File.Exists(uniqueFilePath))
+            {
+                string fileNameOnly = Path.GetFileNameWithoutExtension(filePath);
+                string extension = Path.GetExtension(filePath);
+                uniqueFilePath = Path.Combine(downloadFolder, $"{fileNameOnly}_Copy{copyIndex++}{extension}");
+            }
+            return uniqueFilePath;
+        }
+
+
+        private void searchTextbox_TextChanged(object sender, EventArgs e)
+        {
+            if (chats is null) chats = listBoxChannels.Items.Cast<ListItem>().ToList();
+
+            listBoxChannels.Items.Clear();
+
+            if (string.IsNullOrEmpty(searchTextbox.Text))
+            {
+                listBoxChannels.Items.AddRange(chats.ToArray());
+                return;
+            }
+
+            var filtered = chats.Where(channel => channel.Text.ToLower().Contains(searchTextbox.Text.ToLower())).ToArray();
+            listBoxChannels.Items.AddRange(filtered);
+        }
     }
     public class ListItem
     {
@@ -252,21 +277,46 @@ namespace TelegramBulkDownloader
         {
             Form prompt = new Form()
             {
-                Width = 300,
-                Height = 150,
+                Width = 230,
+                Height = 100,
                 Text = caption,
                 StartPosition = FormStartPosition.CenterScreen,
-                FormBorderStyle = FormBorderStyle.FixedToolWindow
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                MaximizeBox = false,
+                MinimizeBox = false
             };
-            Label textLabel = new Label() { Left = 50, Top = 20, Text = text };
-            TextBox inputBox = new TextBox() { Left = 50, Top = 50, Width = 200 };
-            Button confirmation = new Button() { Text = "Ok", Left = 150, Width = 100, Top = 70 };
-            confirmation.Click += (sender, e) => { prompt.Close(); };
+
+            Label textLabel = new Label()
+            {
+                Left = 10,
+                Top = 2,
+                Width = 90,
+                Text = text,
+            };
+
+            TextBox inputBox = new TextBox()
+            {
+                Left = 100,
+                Top = 0,
+                Width = 100,
+            };
+
+            Button confirmation = new Button()
+            {
+                Text = "OK",
+                DialogResult = DialogResult.OK,
+                Left = 10,
+                Width = 190,
+                Top = inputBox.Bottom + 10,
+            };
+
             prompt.Controls.Add(textLabel);
             prompt.Controls.Add(inputBox);
             prompt.Controls.Add(confirmation);
-            prompt.ShowDialog();
-            return inputBox.Text;
+            prompt.AcceptButton = confirmation;
+
+            return prompt.ShowDialog() == DialogResult.OK ? inputBox.Text : string.Empty;
         }
+
     }
 }
