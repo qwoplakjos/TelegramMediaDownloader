@@ -50,4 +50,5 @@ Before running this application, you need the following:
 
 ## App UI:
 
-![image](https://github.com/user-attachments/assets/2592e893-64f4-4ff6-9fe4-0784992e2aa0)
+![image](https://github.com/user-attachments/assets/68964e3f-9385-4a23-b2fd-7682630d1d09)
+
