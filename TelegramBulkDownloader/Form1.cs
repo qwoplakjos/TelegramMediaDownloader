@@ -140,6 +140,9 @@ namespace TelegramBulkDownloader
                                         filename = string.IsNullOrEmpty(document.Filename)
                                             ? $"{document.id}.{document.mime_type.Split('/')[1]}"
                                             : document.Filename;
+
+
+
                                         filePath = Path.Combine(downloadFolder, filename);
 
                                         if (skipCheckbox.Checked && File.Exists(filePath))
@@ -158,9 +161,9 @@ namespace TelegramBulkDownloader
                                         labelStatus.Text = "Download finished for " + filename;
                                     }
                                 }
-                                else if (msg.media is MessageMediaPhoto)
+                                else if (msg.media is MessageMediaPhoto mmp)
                                 {
-                                    var photo = (msg.media as MessageMediaPhoto).photo as Photo;
+                                    var photo = mmp.photo as Photo;
                                     filename = $"{photo.id}";
 
                                     string tempFilePath = Path.Combine(downloadFolder, filename);
@@ -189,26 +192,33 @@ namespace TelegramBulkDownloader
                                         }
                                     }
 
+                                    var photoType = Storage_FileType.jpeg;
+
                                     using (var fileStream = File.Create(tempFilePath))
                                     {
-                                        var photoType = await client.DownloadFileAsync(photo, fileStream);
-                                        fileStream.Close(); 
-
-                                        string extension = photoType.ToString().ToLower();
-                                        filename = $"{photo.id}.{extension}";
-                                        filePath = Path.Combine(downloadFolder, filename);
-
-                                        if (skipCheckbox.Checked && File.Exists(filePath))
-                                        {
-                                            labelStatus.Text = "Skipping " + filename;
-                                            File.Delete(tempFilePath); 
-                                            continue;
-                                        }
-
-                                        filePath = GetUniqueFilePath(filePath);
-                                        File.Move(tempFilePath, filePath);
-                                        labelStatus.Text = "Download finished for " + filename;
+                                        photoType = await client.DownloadFileAsync(photo, fileStream);
+                                        await fileStream.FlushAsync();
+                                        fileStream.Close();
                                     }
+
+                                    if (photoType == Storage_FileType.partial) photoType = Storage_FileType.jpeg;
+
+                                    string extension = photoType.ToString().ToLower();
+                                    filename = $"{photo.id}.{extension}";
+                                    filePath = Path.Combine(downloadFolder, filename);
+
+
+                                    if (skipCheckbox.Checked && File.Exists(filePath))
+                                    {
+                                        labelStatus.Text = "Skipping " + filename;
+                                        File.Delete(tempFilePath);
+                                        continue;
+                                    }
+
+                                    filePath = GetUniqueFilePath(filePath);
+                                    File.Move(tempFilePath, filePath);
+                                    labelStatus.Text = "Download finished for " + filename;
+
                                 }
                             }
                         }
