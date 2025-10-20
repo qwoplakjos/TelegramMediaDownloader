@@ -2,6 +2,8 @@
 
 A Windows Forms application that allows you to authenticate with your Telegram account, browse joined chats and channels, and download media (documents and photos) from them in bulk.
 
+![image](https://github.com/user-attachments/assets/68964e3f-9385-4a23-b2fd-7682630d1d09)
+
 ## Features
 
 - **Session Management**: Reuse your Telegram session with a session file (`TelegramSession.ss`), so you don't have to log in every time.
@@ -47,8 +49,4 @@ Before running this application, you need the following:
 
 6. **Download Media**:
    - Click the "Download" button to start downloading media files (documents and photos). Files will be saved in the `downloads` folder.
-
-## App UI:
-
-![image](https://github.com/user-attachments/assets/68964e3f-9385-4a23-b2fd-7682630d1d09)
 
